@@ -1,5 +1,5 @@
-# php_socket_demo
-php_socket_demo &amp; chat &amp; danmu
+# php_websocket_demo
+php_websocket_demo &amp; chat &amp; danmu
 
 
 PHP实现简单websocket服务
