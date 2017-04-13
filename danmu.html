@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>弹幕实现</title>
+    <script src="http://cdn.bootcss.com/jquery/2.2.0/jquery.min.js"></script>
+    <script src="dist/jquery.danmu.js"></script>
+    <style type="text/css">
+        #danmu {
+            width: 640px;
+            height: 360px;
+            background-color: gray;
+        }
+
+        #send_box {
+            position: absolute;
+            top: 370px;
+            left: 0px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="danmu">
+    <video autoplay=""
+           src="http://gslb.miaopai.com/stream/cfWmxAgMtq59AnZ6ENbvnt~WAjdtsqzK.mp4?yx=&amp;refer=weibo_app&amp;Expires=1492067831&amp;ssig=PFil9Uw3zt&amp;KID=unistore,video"
+           style="width: 640px; height: 360px;">
+               如果视频失效 就换个吧
+           </video>
+</div>
+
+<div id="send_box">
+    <input id="content" type="text"/>
+    <input type="submit" onclick="send()" value="发弹幕"/>
+</div>
+
+
+<script type="text/javascript">
+    // 用的别人的demo模板
+    var ws = new WebSocket("ws://0.0.0.0:4567");
+    ws.onopen = function () {
+        ws.send('你可以发弹幕了');
+    };
+
+    ws.onmessage = function (e) {
+        console.log("message:" + e.data);
+        var time = jQuery('#danmu').data("nowtime") + 1;
+        var new_obj = {
+            'text': eval("'" + e.data + "'"),
+            'color': 'red',
+            'size': '1',
+            'position': '0',
+            'time': time,
+            'isnew': ' '
+        };
+
+        console.log(e.data);
+        jQuery('#danmu').danmu("add_danmu", new_obj);
+    };
+
+    ws.onerror = function () {
+        console.log("error");
+    };
+
+    $(document).ready(function () {
+        $("#danmu").danmu({
+            left: 0,    //区域的起始位置x坐标
+            top: 0,  //区域的起始位置y坐标
+            height: 360, //区域的高度
+            width: 640, //区域的宽度
+            zindex: 100, //div的css样式zindex
+            speed: 20000, //弹幕速度，飞过区域的毫秒数
+            sumtime: 50000, //弹幕运行总时间
+            danmuss: {}, //danmuss对象，运行时的弹幕内容
+            default_font_color: "#FFFFFF", //弹幕默认字体颜色
+            font_size_small: 16, //小号弹幕的字体大小,注意此属性值只能是整数
+            font_size_big: 24, //大号弹幕的字体大小
+            opacity: "0.9", //弹幕默认透明度
+            top_botton_danmu_time: 6000 //顶端底端弹幕持续时间
+        });
+        $('#danmu').danmu('danmu_start');
+    });
+
+    document.onkeydown = function(e){
+        if (e.keyCode == 13) {
+            send();
+        }
+    };
+    function send() {
+        ws.send(document.getElementById('content').value);
+        document.getElementById('content').value = '';
+    }
+</script>
+</body>
+</html>
