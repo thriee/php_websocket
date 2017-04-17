@@ -165,4 +165,4 @@ class WebSocket
     }
 }
 
-(new WebSocket('0.0.0.0', '4567'))->run();
+(new WebSocket('127.0.0.1', '4567'))->run();
